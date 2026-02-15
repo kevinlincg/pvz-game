@@ -1,0 +1,21 @@
+# Build directories
+build/
+build-debug/
+build-web/
+
+# Save files
+saves/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Compile database
+compile_commands.json
