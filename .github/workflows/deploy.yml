@@ -11,13 +11,15 @@ jobs:
     steps:
       - name: Checkout pvz-game
         uses: actions/checkout@v4
+        with:
+          path: pvz-game
 
       - name: Checkout sf3-engine (private)
         uses: actions/checkout@v4
         with:
           repository: kevinlincg/soulfire3
           ssh-key: ${{ secrets.SF3_DEPLOY_KEY }}
-          path: ../sf3-engine
+          path: sf3-engine
 
       - name: Setup Emscripten
         uses: mymindstorm/setup-emsdk@v14
@@ -25,8 +27,8 @@ jobs:
           version: 3.1.51
 
       - name: Build sf3-engine (web)
+        working-directory: sf3-engine
         run: |
-          cd ../sf3-engine
           emcmake cmake -B build-web -G "Unix Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
             -DSF3_BUILD_EXAMPLES=OFF \
@@ -34,14 +36,17 @@ jobs:
           cmake --build build-web -j$(nproc)
 
       - name: Build pvz-game (web)
+        working-directory: pvz-game
         run: |
           emcmake cmake -B build-web -G "Unix Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
-            -DSF3_BUILD_DIR=../sf3-engine/build-web \
-            -DSF3_LIBRARY=../sf3-engine/build-web/libsf3.a
+            -DSF3_ENGINE_DIR=${{ github.workspace }}/sf3-engine \
+            -DSF3_BUILD_DIR=${{ github.workspace }}/sf3-engine/build-web \
+            -DSF3_LIBRARY=${{ github.workspace }}/sf3-engine/build-web/libsf3.a
           cmake --build build-web -j$(nproc)
 
       - name: Prepare deploy directory
+        working-directory: pvz-game
         run: |
           mkdir -p build-web/deploy
           cp build-web/pvz.html build-web/deploy/index.html
@@ -54,4 +59,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy build-web/deploy --project-name=pvz-game
+          command: pages deploy pvz-game/build-web/deploy --project-name=pvz-game
