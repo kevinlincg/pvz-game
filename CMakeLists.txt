@@ -109,6 +109,7 @@ else()
             -sMIN_WEBGL_VERSION=1
             -sMAX_WEBGL_VERSION=2
             -sFULL_ES2=1
+            -sGL_ENABLE_GET_PROC_ADDRESS=1
             -sALLOW_MEMORY_GROWTH=1
             -sINITIAL_MEMORY=67108864
             -sSTACK_SIZE=1048576
