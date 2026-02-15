@@ -32,7 +32,9 @@ jobs:
           emcmake cmake -B build-web -G "Unix Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
             -DSF3_BUILD_EXAMPLES=OFF \
-            -DSF3_BUILD_TESTS=OFF
+            -DSF3_BUILD_TESTS=OFF \
+            -DSF3_ENABLE_NET=OFF \
+            -DSF3_ENABLE_PACKAGE=OFF
           cmake --build build-web -j$(nproc)
 
       - name: Build pvz-game (web)
