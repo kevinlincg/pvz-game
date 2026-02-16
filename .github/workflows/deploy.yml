@@ -29,16 +29,26 @@ jobs:
       - name: Build sf3-engine (web)
         run: |
           cd sf3-engine
+          echo "=== Building SF3 for Web ==="
           emcmake cmake -B build-web \
             -DCMAKE_BUILD_TYPE=Release \
             -DSF3_BUILD_EXAMPLES=OFF \
             -DSF3_BUILD_TESTS=OFF \
             -DSF3_ENABLE_NET=OFF \
             -DSF3_ENABLE_PACKAGE=OFF \
+            -DSF3_ENABLE_SAVE=OFF \
+            -DSF3_ENABLE_DIALOGUE=OFF \
+            -DSF3_ENABLE_AI=OFF \
+            -DSF3_ENABLE_SCRIPTING=OFF \
+            -DSF3_ENABLE_THREADING=OFF \
             -DSDL_SHARED=OFF \
             -DSDL_STATIC=ON
-          cmake --build build-web -j$(nproc)
           
+          echo ""
+          echo "=== Compiling SF3 ==="
+          cmake --build build-web -j$(nproc) 2>&1 | tee sf3_build.log
+          
+          echo ""
           echo "=== Checking SF3 build output ==="
           ls -lh build-web/libsf3.a || echo "ERROR: libsf3.a not found!"
           file build-web/libsf3.a || true
