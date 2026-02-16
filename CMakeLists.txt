@@ -57,12 +57,19 @@ else()
         set(SDL_STATIC ON CACHE BOOL "" FORCE)
         set(SDL_TEST OFF CACHE BOOL "" FORCE)
         FetchContent_MakeAvailable(SDL3)
+        set(SDL3_LIBRARIES SDL3::SDL3-static)
+    else()
+        set(SDL3_LIBRARIES SDL3::SDL3)
     endif()
 endif()
 
 # --- Lua Integration ---
 # SF3 already includes Lua, so we can use it directly
-include_directories(${SF3_ENGINE_DIR}/third_party/lua)
+if(PVZ_SF3_SOURCE)
+    include_directories(${SF3_ENGINE_DIR}/third_party/lua)
+else()
+    include_directories(${SF3_BUILD_DIR}/_deps/lua54-src/include)
+endif()
 
 # --- Plant Legends Game Target ---
 set(PLANT_LEGENDS_SOURCES
@@ -95,6 +102,24 @@ target_include_directories(plant-legends PRIVATE
 )
 
 target_link_libraries(plant-legends PRIVATE sf3)
+
+# 在 prebuilt 模式下鏈接 SDL3
+if(NOT PVZ_SF3_SOURCE AND DEFINED SDL3_LIBRARIES)
+    target_link_libraries(plant-legends PRIVATE ${SDL3_LIBRARIES})
+    
+    # Platform-specific transitive deps for prebuilt mode
+    if(APPLE)
+        find_library(COREAUDIO_LIBRARY CoreAudio)
+        find_library(AUDIOUNIT_LIBRARY AudioUnit)
+        find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox)
+        target_link_libraries(plant-legends PRIVATE
+            ${COREAUDIO_LIBRARY} ${AUDIOUNIT_LIBRARY} ${AUDIOTOOLBOX_LIBRARY})
+    elseif(WIN32)
+        target_link_libraries(plant-legends PRIVATE winmm ole32 setupapi imm32 version)
+    elseif(UNIX)
+        target_link_libraries(plant-legends PRIVATE dl m)
+    endif()
+endif()
 
 # Copy scripts to build directory
 add_custom_command(TARGET plant-legends POST_BUILD
