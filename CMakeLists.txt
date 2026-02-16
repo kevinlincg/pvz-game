@@ -109,7 +109,7 @@ if(EMSCRIPTEN)
     set_target_properties(plant-legends PROPERTIES SUFFIX ".html")
     
     # Emscripten linker options
-    set(EM_LINK_FLAGS
+    target_link_options(plant-legends PRIVATE
         -sUSE_SDL=0
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
@@ -122,22 +122,16 @@ if(EMSCRIPTEN)
         -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
     )
     
-    # Preload scripts (always needed)
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/scripts")
-        list(APPEND EM_LINK_FLAGS "--preload-file" "scripts@scripts")
-    endif()
-    
-    # Preload assets if directory exists
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
-        list(APPEND EM_LINK_FLAGS "--preload-file" "assets@assets")
-    endif()
+    # TODO: Add file preloading after basic build works
+    # --preload-file scripts@scripts
+    # --preload-file assets@assets
     
     # Shell file if exists
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html")
-        list(APPEND EM_LINK_FLAGS "--shell-file" "web/shell.html")
+        target_link_options(plant-legends PRIVATE
+            --shell-file ${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html
+        )
     endif()
-    
-    target_link_options(plant-legends PRIVATE ${EM_LINK_FLAGS})
 elseif(APPLE)
     find_library(COREAUDIO_LIBRARY CoreAudio)
     find_library(AUDIOUNIT_LIBRARY AudioUnit)
