@@ -33,6 +33,8 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             -DSF3_BUILD_EXAMPLES=OFF \
             -DSF3_BUILD_TESTS=OFF \
+            -DSF3_ENABLE_NET=OFF \
+            -DSF3_ENABLE_PACKAGE=OFF \
             -DSDL_SHARED=OFF \
             -DSDL_STATIC=ON
           cmake --build build-web -j$(nproc)
