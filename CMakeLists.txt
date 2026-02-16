@@ -64,12 +64,8 @@ else()
 endif()
 
 # --- Lua Integration ---
-# SF3 already includes Lua, so we can use it directly
-if(PVZ_SF3_SOURCE)
-    include_directories(${SF3_ENGINE_DIR}/third_party/lua)
-else()
-    include_directories(${SF3_BUILD_DIR}/_deps/lua54-src/include)
-endif()
+# Always use SF3 engine's bundled Lua
+include_directories(${SF3_ENGINE_DIR}/third_party/lua)
 
 # --- Plant Legends Game Target ---
 set(PLANT_LEGENDS_SOURCES
