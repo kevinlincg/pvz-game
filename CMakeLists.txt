@@ -45,22 +45,9 @@ else()
         INTERFACE_COMPILE_DEFINITIONS "SF3_STATIC"
     )
     
-    # 添加 SDL3 依賴
-    find_package(SDL3 QUIET)
-    if(NOT SDL3_FOUND)
-        message(STATUS "SDL3 not found, fetching...")
-        include(FetchContent)
-        FetchContent_Declare(SDL3
-            GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-            GIT_TAG main GIT_SHALLOW ON)
-        set(SDL_SHARED OFF CACHE BOOL "" FORCE)
-        set(SDL_STATIC ON CACHE BOOL "" FORCE)
-        set(SDL_TEST OFF CACHE BOOL "" FORCE)
-        FetchContent_MakeAvailable(SDL3)
-        set(SDL3_LIBRARIES SDL3::SDL3-static)
-    else()
-        set(SDL3_LIBRARIES SDL3::SDL3)
-    endif()
+    # 在 prebuilt 模式下，不額外鏈接 SDL3
+    # SF3 的 static library 已經包含了所有必要的符號
+    message(STATUS "[Plant Legends] Using prebuilt SF3 from: ${SF3_LIBRARY}")
 endif()
 
 # --- Lua Integration ---
@@ -98,24 +85,6 @@ target_include_directories(plant-legends PRIVATE
 )
 
 target_link_libraries(plant-legends PRIVATE sf3)
-
-# 在 prebuilt 模式下鏈接 SDL3
-if(NOT PVZ_SF3_SOURCE AND DEFINED SDL3_LIBRARIES)
-    target_link_libraries(plant-legends PRIVATE ${SDL3_LIBRARIES})
-    
-    # Platform-specific transitive deps for prebuilt mode
-    if(APPLE)
-        find_library(COREAUDIO_LIBRARY CoreAudio)
-        find_library(AUDIOUNIT_LIBRARY AudioUnit)
-        find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox)
-        target_link_libraries(plant-legends PRIVATE
-            ${COREAUDIO_LIBRARY} ${AUDIOUNIT_LIBRARY} ${AUDIOTOOLBOX_LIBRARY})
-    elseif(WIN32)
-        target_link_libraries(plant-legends PRIVATE winmm ole32 setupapi imm32 version)
-    elseif(UNIX)
-        target_link_libraries(plant-legends PRIVATE dl m)
-    endif()
-endif()
 
 # Copy scripts to build directory
 add_custom_command(TARGET plant-legends POST_BUILD
