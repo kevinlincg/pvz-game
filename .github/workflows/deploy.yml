@@ -26,13 +26,26 @@ jobs:
         with:
           version: 3.1.51
 
+      - name: Build sf3-engine (web)
+        working-directory: sf3-engine
+        run: |
+          emcmake cmake -B build-web -G "Unix Makefiles" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DSF3_BUILD_EXAMPLES=OFF \
+            -DSF3_BUILD_TESTS=OFF \
+            -DSF3_ENABLE_NET=OFF \
+            -DSF3_ENABLE_PACKAGE=OFF
+          cmake --build build-web -j$(nproc)
+
       - name: Build pvz-game (web)
         working-directory: pvz-game
         run: |
           emcmake cmake -B build-web -G "Unix Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
             -DSF3_ENGINE_DIR=${{ github.workspace }}/sf3-engine \
-            -DPVZ_SF3_SOURCE=ON
+            -DPVZ_SF3_SOURCE=OFF \
+            -DSF3_BUILD_DIR=${{ github.workspace }}/sf3-engine/build-web \
+            -DSF3_LIBRARY=${{ github.workspace }}/sf3-engine/build-web/libsf3.a
           cmake --build build-web -j$(nproc)
 
       - name: Prepare deploy directory
