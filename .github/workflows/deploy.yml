@@ -104,7 +104,7 @@ jobs:
           cp build-web/plant-legends.html build-web/deploy/index.html
           cp build-web/plant-legends.js build-web/deploy/
           cp build-web/plant-legends.wasm build-web/deploy/
-          cp build-web/plant-legends.data build-web/deploy/
+          # Note: .data file will be added when we enable --preload-file for assets
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
