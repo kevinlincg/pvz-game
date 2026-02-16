@@ -103,3 +103,39 @@ message(STATUS "[Plant Legends] Build configuration complete")
 message(STATUS "  - SF3 Engine: ${SF3_ENGINE_DIR}")
 message(STATUS "  - Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "  - Sources: ${PLANT_LEGENDS_SOURCES}")
+
+# --- Tests ---
+option(BUILD_TESTS "Build test suite" ON)
+
+if(BUILD_TESTS AND NOT EMSCRIPTEN)
+    set(TEST_SOURCES
+        tests/test_main.cpp
+        src/lua/lua_manager.cpp
+    )
+    
+    add_executable(plant-legends-tests ${TEST_SOURCES})
+    
+    target_include_directories(plant-legends-tests PRIVATE 
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${SF3_ENGINE_DIR}/src
+        ${SF3_ENGINE_DIR}/third_party
+    )
+    
+    target_link_libraries(plant-legends-tests PRIVATE lua54)
+    
+    # Copy scripts to test directory
+    add_custom_command(TARGET plant-legends-tests POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_SOURCE_DIR}/scripts
+            $<TARGET_FILE_DIR:plant-legends-tests>/scripts
+        COMMENT "Copying Lua scripts to test directory"
+    )
+    
+    # Enable testing
+    enable_testing()
+    add_test(NAME PlantLegendsTests COMMAND plant-legends-tests)
+    
+    message(STATUS "  - Tests: Enabled")
+else()
+    message(STATUS "  - Tests: Disabled")
+endif()
