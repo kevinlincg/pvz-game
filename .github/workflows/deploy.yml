@@ -43,8 +43,7 @@ jobs:
           emcmake cmake -B build-web -G "Unix Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
             -DSF3_ENGINE_DIR=${{ github.workspace }}/sf3-engine \
-            -DSF3_BUILD_DIR=${{ github.workspace }}/sf3-engine/build-web \
-            -DSF3_LIBRARY=${{ github.workspace }}/sf3-engine/build-web/libsf3.a
+            -DPVZ_SF3_SOURCE=ON
           cmake --build build-web -j$(nproc)
 
       - name: Prepare deploy directory
