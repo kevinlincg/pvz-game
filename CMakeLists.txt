@@ -51,6 +51,10 @@ set(PLANT_LEGENDS_SOURCES
     src/game/enemy.hpp
     src/game/projectile.cpp
     src/game/projectile.hpp
+    src/systems/renderer.cpp
+    src/systems/renderer.hpp
+    src/ui/ui_system.cpp
+    src/ui/ui_system.hpp
 )
 
 add_executable(plant-legends ${PLANT_LEGENDS_SOURCES})

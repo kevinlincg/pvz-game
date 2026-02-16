@@ -65,10 +65,14 @@ public:
     bool placePlant(const std::string& plantId, const GridCoord& coord);
     void removePlant(const GridCoord& coord);
     PlantPtr getPlantAt(const GridCoord& coord) const;
+    const std::vector<PlantPtr>& getPlants() const { return plants; }
     
     // 敵人
     void spawnEnemy(const std::string& enemyId, i32 row);
     const std::vector<EnemyPtr>& getEnemies() const { return enemies; }
+    
+    // 投射物
+    const std::vector<ProjectilePtr>& getProjectiles() const { return projectiles; }
     
     // 資源
     i32 getSun() const { return sun; }
