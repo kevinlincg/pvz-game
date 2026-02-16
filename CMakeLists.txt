@@ -52,11 +52,17 @@ else()
         INTERFACE_INCLUDE_DIRECTORIES "${SF3_BUILD_DIR}/_deps/sdl3-src/include"
     )
     
+    # 直接編譯 Lua 源碼（從 SF3 的 third_party/lua）
+    file(GLOB LUA_SOURCES "${SF3_ENGINE_DIR}/third_party/lua/*.c")
+    add_library(lua54 STATIC ${LUA_SOURCES})
+    target_include_directories(lua54 PUBLIC ${SF3_ENGINE_DIR}/third_party/lua)
+    
     # 添加 SDL3 頭文件路徑
     include_directories(${SF3_BUILD_DIR}/_deps/sdl3-src/include)
     
     message(STATUS "[Plant Legends] Using prebuilt SF3 from: ${SF3_LIBRARY}")
     message(STATUS "[Plant Legends] SDL3 lib: ${SF3_BUILD_DIR}/_deps/sdl3-build/libSDL3.a")
+    message(STATUS "[Plant Legends] Compiling Lua from: ${SF3_ENGINE_DIR}/third_party/lua")
 endif()
 
 # --- Lua Integration ---
@@ -93,7 +99,7 @@ target_include_directories(plant-legends PRIVATE
     ${SF3_ENGINE_DIR}/third_party
 )
 
-target_link_libraries(plant-legends PRIVATE sf3)
+target_link_libraries(plant-legends PRIVATE sf3 lua54)
 
 # 在 prebuilt 模式下額外鏈接 SDL3
 if(NOT PVZ_SF3_SOURCE AND EMSCRIPTEN)
