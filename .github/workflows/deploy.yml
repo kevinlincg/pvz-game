@@ -46,12 +46,19 @@ jobs:
           
           echo ""
           echo "=== Compiling SF3 ==="
-          cmake --build build-web -j$(nproc) 2>&1 | tee sf3_build.log
+          cmake --build build-web -j$(nproc) 2>&1 | tail -50
           
           echo ""
           echo "=== Checking SF3 build output ==="
           ls -lh build-web/libsf3.a || echo "ERROR: libsf3.a not found!"
-          file build-web/libsf3.a || true
+          
+          echo ""
+          echo "=== ALL .a files in build-web ==="
+          find build-web -name "*.a" -type f
+          
+          echo ""
+          echo "=== Directory structure of _deps ==="
+          ls -la build-web/_deps/ 2>/dev/null || echo "No _deps directory"
 
       - name: Build pvz-game (web)
         run: |
