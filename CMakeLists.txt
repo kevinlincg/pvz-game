@@ -40,6 +40,17 @@ set(PLANT_LEGENDS_SOURCES
     src/main.cpp
     src/lua/lua_manager.cpp
     src/lua/lua_manager.hpp
+    src/core/entity.cpp
+    src/core/entity.hpp
+    src/core/types.hpp
+    src/game/game.cpp
+    src/game/game.hpp
+    src/game/plant.cpp
+    src/game/plant.hpp
+    src/game/enemy.cpp
+    src/game/enemy.hpp
+    src/game/projectile.cpp
+    src/game/projectile.hpp
 )
 
 add_executable(plant-legends ${PLANT_LEGENDS_SOURCES})
