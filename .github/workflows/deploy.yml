@@ -39,7 +39,6 @@ jobs:
             -DSF3_ENABLE_SAVE=OFF \
             -DSF3_ENABLE_DIALOGUE=OFF \
             -DSF3_ENABLE_AI=OFF \
-            -DSF3_ENABLE_SCRIPTING=OFF \
             -DSF3_ENABLE_THREADING=OFF \
             -DSDL_SHARED=OFF \
             -DSDL_STATIC=ON

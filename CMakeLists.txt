@@ -45,11 +45,18 @@ else()
         INTERFACE_COMPILE_DEFINITIONS "SF3_STATIC"
     )
     
-    # 添加 SDL3 頭文件路徑（prebuilt 模式需要）
+    # 添加 SDL3 庫（prebuilt 模式需要）
+    add_library(SDL3-static STATIC IMPORTED)
+    set_target_properties(SDL3-static PROPERTIES
+        IMPORTED_LOCATION "${SF3_BUILD_DIR}/_deps/sdl3-build/libSDL3.a"
+        INTERFACE_INCLUDE_DIRECTORIES "${SF3_BUILD_DIR}/_deps/sdl3-src/include"
+    )
+    
+    # 添加 SDL3 頭文件路徑
     include_directories(${SF3_BUILD_DIR}/_deps/sdl3-src/include)
     
     message(STATUS "[Plant Legends] Using prebuilt SF3 from: ${SF3_LIBRARY}")
-    message(STATUS "[Plant Legends] SDL3 include: ${SF3_BUILD_DIR}/_deps/sdl3-src/include")
+    message(STATUS "[Plant Legends] SDL3 lib: ${SF3_BUILD_DIR}/_deps/sdl3-build/libSDL3.a")
 endif()
 
 # --- Lua Integration ---
@@ -87,6 +94,11 @@ target_include_directories(plant-legends PRIVATE
 )
 
 target_link_libraries(plant-legends PRIVATE sf3)
+
+# 在 prebuilt 模式下額外鏈接 SDL3
+if(NOT PVZ_SF3_SOURCE AND EMSCRIPTEN)
+    target_link_libraries(plant-legends PRIVATE SDL3-static)
+endif()
 
 # Copy scripts to build directory
 add_custom_command(TARGET plant-legends POST_BUILD
