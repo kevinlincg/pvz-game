@@ -13,6 +13,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # --- SF3 Engine Integration ---
 option(PVZ_SF3_SOURCE "Include sf3-engine source for full debugging" ON)
 set(SF3_ENGINE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../soulfire3" CACHE PATH "Path to sf3-engine root")
+set(SF3_BUILD_DIR "" CACHE PATH "sf3-engine build directory (for prebuilt mode)")
+set(SF3_LIBRARY "" CACHE FILEPATH "Path to libsf3.a (for prebuilt mode)")
 
 # Resolve to absolute
 get_filename_component(SF3_ENGINE_DIR "${SF3_ENGINE_DIR}" ABSOLUTE)
@@ -28,7 +30,34 @@ if(PVZ_SF3_SOURCE)
     set(SF3_BUILD_TESTS OFF CACHE BOOL "" FORCE)
     add_subdirectory(${SF3_ENGINE_DIR} ${CMAKE_BINARY_DIR}/sf3-engine)
 else()
-    message(FATAL_ERROR "Prebuilt mode not supported yet, use -DPVZ_SF3_SOURCE=ON")
+    message(STATUS "[Plant Legends] sf3-engine PREBUILT mode")
+    
+    # 使用提供的 build 目錄和 library 路徑
+    if(NOT SF3_BUILD_DIR OR NOT SF3_LIBRARY)
+        message(FATAL_ERROR "Prebuilt mode requires -DSF3_BUILD_DIR and -DSF3_LIBRARY")
+    endif()
+    
+    # 創建 imported target
+    add_library(sf3 STATIC IMPORTED)
+    set_target_properties(sf3 PROPERTIES
+        IMPORTED_LOCATION "${SF3_LIBRARY}"
+        INTERFACE_INCLUDE_DIRECTORIES "${SF3_ENGINE_DIR}/src;${SF3_ENGINE_DIR}/third_party"
+        INTERFACE_COMPILE_DEFINITIONS "SF3_STATIC"
+    )
+    
+    # 添加 SDL3 依賴
+    find_package(SDL3 QUIET)
+    if(NOT SDL3_FOUND)
+        message(STATUS "SDL3 not found, fetching...")
+        include(FetchContent)
+        FetchContent_Declare(SDL3
+            GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+            GIT_TAG main GIT_SHALLOW ON)
+        set(SDL_SHARED OFF CACHE BOOL "" FORCE)
+        set(SDL_STATIC ON CACHE BOOL "" FORCE)
+        set(SDL_TEST OFF CACHE BOOL "" FORCE)
+        FetchContent_MakeAvailable(SDL3)
+    endif()
 endif()
 
 # --- Lua Integration ---

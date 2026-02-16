@@ -208,6 +208,11 @@ void Renderer::renderEffects(const Game& game) {
 void Renderer::renderUI(const Game& game) {
     using namespace SF3;
     
+    // 遊戲標題和版本
+    Rect titleBg(10, 680, 300, 30);
+    Graphics::drawRect(titleBg, Color(0, 0, 0, 180));
+    // TODO: Graphics::drawText(20, 690, "植物戰紀 Plant Legends v0.1.0", Color(255, 200, 50), 18);
+    
     // 陽光顯示
     Rect sunBg(10, 10, 150, 40);
     Graphics::drawRect(sunBg, Color(0, 0, 0, 150));

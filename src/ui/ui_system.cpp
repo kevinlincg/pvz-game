@@ -220,6 +220,13 @@ void UIManager::update(f32 dt, const Game& game) {
 }
 
 void UIManager::render(const Game& game) {
+    using namespace SF3;
+    
+    // 版本號顯示（右上角）
+    Rect versionBg(1100, 10, 170, 25);
+    Graphics::drawRect(versionBg, Color(0, 0, 0, 150));
+    // TODO: Graphics::drawText(1110, 17, "v0.1.0 Build 20260216", Color(200, 200, 200), 14);
+    
     renderSunDisplay(game);
     renderWaveInfo(game);
     renderPlantCards(game);

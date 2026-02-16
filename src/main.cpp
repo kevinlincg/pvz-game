@@ -23,6 +23,7 @@ int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "  植物戰紀 (Plant Legends)" << std::endl;
     std::cout << "  Version 0.1.0" << std::endl;
+    std::cout << "  Build: " << __DATE__ << " " << __TIME__ << std::endl;
     std::cout << "========================================" << std::endl;
     
     // 初始化 SF3 引擎
