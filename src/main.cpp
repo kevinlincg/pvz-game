@@ -1,76 +1,96 @@
-#include "sf3.hpp"
-#include "scene/sf3_scene.hpp"
-#include "performance/sf3_profiler.hpp"
-#include "pvz_scenes.hpp"
-#include "pvz_data.hpp"
-#include "pvz_font.hpp"
+// ============================================
+// Plant Legends - Main Entry Point
+// ============================================
 
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-#endif
+#include "sf3.hpp"
+#include "lua/lua_manager.hpp"
+#include <iostream>
 
 using namespace SF3;
+using namespace PL;
 
-static ProfilerOverlay* s_profiler = nullptr;
-
-static void mainLoop() {
-    auto& app = App::instance();
-    auto& sm = SceneManager::instance();
-
-    app.pollEvents();
-
-    if (Input::keyPressed(Key::F3) && s_profiler) {
-        s_profiler->toggle();
-    }
-
-    float dt = app.deltaTime();
-    sm.update(dt);
-    if (s_profiler) s_profiler->update(dt);
-
-    Graphics::beginFrame();
-    Graphics::clear(Color::Black());
-    sm.render();
-    if (s_profiler) s_profiler->render();
-    Graphics::endFrame();
-}
-
-int main(int, char**) {
+int main() {
+    std::cout << "========================================" << std::endl;
+    std::cout << "  植物戰紀 (Plant Legends)" << std::endl;
+    std::cout << "  Version 0.1.0" << std::endl;
+    std::cout << "========================================" << std::endl;
+    
+    // 初始化 SF3 引擎
     auto& app = App::instance();
     Config config;
-    config.title = "Plants vs Zombies - SF3 Engine";
-    config.width = static_cast<int>(PVZ::SCREEN_W);
-    config.height = static_cast<int>(PVZ::SCREEN_H);
+    config.title = "植物戰紀 | Plant Legends";
+    config.width = 1280;
+    config.height = 720;
     config.vsync = true;
-
-    if (failed(app.init(config))) return 1;
-
-    // Load saved progress
-    PVZ::loadProgress();
-
-    // Initialize font system
-    PVZ::FontManager::instance().init();
-
-    // Profiler overlay (F3 to toggle)
-    static ProfilerOverlay profiler;
-    s_profiler = &profiler;
-
-    // Register scenes
-    auto& sm = SceneManager::instance();
-    sm.registerScene<PVZ::MenuScene>("menu");
-    sm.registerScene<PVZ::LevelSelectScene>("levelselect");
-    sm.registerScene<PVZ::ShopScene>("shop");
-    sm.registerScene<PVZ::GameScene>("game");
-    sm.registerScene<PVZ::GameOverScene>("gameover");
-
-    sm.switchTo("menu", SceneTransition::Fade(0.5f));
-
-#ifdef __EMSCRIPTEN__
-    emscripten_set_main_loop(mainLoop, 0, 1);
-#else
-    while (app.running()) {
-        mainLoop();
+    
+    if (failed(app.init(config))) {
+        std::cerr << "[Error] Failed to initialize SF3 engine" << std::endl;
+        return 1;
     }
-#endif
-
+    
+    // 初始化 Lua
+    LuaManager& lua = LuaManager::instance();
+    if (!lua.initialize()) {
+        std::cerr << "[Error] Failed to initialize Lua: " << lua.getLastError() << std::endl;
+        return 1;
+    }
+    
+    // 載入配置
+    std::cout << "\n[Loading] Game configuration..." << std::endl;
+    if (!lua.loadScript("scripts/config.lua")) {
+        std::cerr << "[Error] Failed to load config: " << lua.getLastError() << std::endl;
+        return 1;
+    }
+    
+    // 載入植物定義
+    std::cout << "[Loading] Plant definitions..." << std::endl;
+    if (!lua.loadScript("scripts/plants/all_plants.lua")) {
+        std::cerr << "[Error] Failed to load plants: " << lua.getLastError() << std::endl;
+        return 1;
+    }
+    
+    // 載入敵人定義
+    std::cout << "[Loading] Enemy definitions..." << std::endl;
+    if (!lua.loadScript("scripts/enemies/all_enemies.lua")) {
+        std::cerr << "[Error] Failed to load enemies: " << lua.getLastError() << std::endl;
+        return 1;
+    }
+    
+    // 載入關卡定義
+    std::cout << "[Loading] Level definitions..." << std::endl;
+    if (!lua.loadScript("scripts/levels/all_levels.lua")) {
+        std::cerr << "[Error] Failed to load levels: " << lua.getLastError() << std::endl;
+        return 1;
+    }
+    
+    std::cout << "\n[Success] All game data loaded!" << std::endl;
+    std::cout << "========================================\n" << std::endl;
+    
+    // 主遊戲循環
+    while (app.running()) {
+        app.pollEvents();
+        float dt = app.deltaTime();
+        
+        // 開始渲染
+        Graphics::beginFrame();
+        Graphics::clear(Color{50, 120, 80});
+        
+        // 繪製測試文字（暫時用簡單矩形代替）
+        Graphics::drawRect({40, 40, 600, 50}, Color{255, 255, 255});
+        Graphics::drawRect({40, 90, 300, 40}, Color{200, 200, 200});
+        Graphics::drawRect({40, 140, 200, 30}, Color{150, 150, 150});
+        
+        // 檢查退出
+        if (Input::keyPressed(Key::Escape)) {
+            break;
+        }
+        
+        Graphics::endFrame();
+    }
+    
+    // 清理
+    lua.shutdown();
+    
+    std::cout << "\n[Shutdown] Goodbye!" << std::endl;
     return 0;
 }
