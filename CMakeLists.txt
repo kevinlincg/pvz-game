@@ -147,6 +147,11 @@ if(EMSCRIPTEN)
         -Wl,--no-whole-archive
     )
     
+    # 預加載 Lua scripts（使用相對路徑，從 build-web 目錄向上查找）
+    target_link_options(plant-legends PRIVATE
+        --preload-file ../scripts@scripts
+    )
+    
     # Shell file if exists
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html")
         target_link_options(plant-legends PRIVATE
