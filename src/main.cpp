@@ -49,27 +49,42 @@ int main() {
     // 載入遊戲資料
     std::cout << "\n[Loading] Game data..." << std::endl;
     
+    bool loadSuccess = true;
+    
     if (!lua.loadScript("scripts/config.lua")) {
-        std::cerr << "[Error] Failed to load config" << std::endl;
-        return 1;
+        std::cerr << "[Error] Failed to load config: " << lua.getLastError() << std::endl;
+        loadSuccess = false;
+    } else {
+        std::cout << "[OK] config.lua" << std::endl;
     }
     
     if (!lua.loadScript("scripts/plants/all_plants.lua")) {
-        std::cerr << "[Error] Failed to load plants" << std::endl;
-        return 1;
+        std::cerr << "[Error] Failed to load plants: " << lua.getLastError() << std::endl;
+        loadSuccess = false;
+    } else {
+        std::cout << "[OK] all_plants.lua" << std::endl;
     }
     
     if (!lua.loadScript("scripts/enemies/all_enemies.lua")) {
-        std::cerr << "[Error] Failed to load enemies" << std::endl;
-        return 1;
+        std::cerr << "[Error] Failed to load enemies: " << lua.getLastError() << std::endl;
+        loadSuccess = false;
+    } else {
+        std::cout << "[OK] all_enemies.lua" << std::endl;
     }
     
     if (!lua.loadScript("scripts/levels/all_levels.lua")) {
-        std::cerr << "[Error] Failed to load levels" << std::endl;
-        return 1;
+        std::cerr << "[Error] Failed to load levels: " << lua.getLastError() << std::endl;
+        loadSuccess = false;
+    } else {
+        std::cout << "[OK] all_levels.lua" << std::endl;
     }
     
-    std::cout << "[Success] All game data loaded!\n" << std::endl;
+    if (!loadSuccess) {
+        std::cerr << "[Error] Some game data failed to load!" << std::endl;
+        // 不直接返回，繼續嘗試運行
+    } else {
+        std::cout << "[Success] All game data loaded!\n" << std::endl;
+    }
     
     // 初始化遊戲
     Game& game = getGame();
