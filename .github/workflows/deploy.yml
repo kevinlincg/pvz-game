@@ -27,8 +27,8 @@ jobs:
           version: 3.1.51
 
       - name: Build sf3-engine (web)
-        working-directory: sf3-engine
         run: |
+          cd sf3-engine
           emcmake cmake -B build-web \
             -DCMAKE_BUILD_TYPE=Release \
             -DSF3_BUILD_EXAMPLES=OFF \
@@ -44,13 +44,17 @@ jobs:
           file build-web/libsf3.a || true
 
       - name: Build pvz-game (web)
-        working-directory: pvz-game
         run: |
+          cd pvz-game
           echo "=== Checking SF3 paths ==="
           echo "SF3_ENGINE_DIR: ${{ github.workspace }}/sf3-engine"
           echo "SF3_BUILD_DIR: ${{ github.workspace }}/sf3-engine/build-web"
           echo "SF3_LIBRARY: ${{ github.workspace }}/sf3-engine/build-web/libsf3.a"
           ls -lh ${{ github.workspace }}/sf3-engine/build-web/libsf3.a || echo "ERROR: libsf3.a not found!"
+          
+          echo "=== Checking pvz-game directory ==="
+          pwd
+          ls -la
           
           emcmake cmake -B build-web -G "Unix Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
@@ -61,8 +65,8 @@ jobs:
           cmake --build build-web -j$(nproc)
 
       - name: Prepare deploy directory
-        working-directory: pvz-game
         run: |
+          cd pvz-game
           mkdir -p build-web/deploy
           cp build-web/plant-legends.html build-web/deploy/index.html
           cp build-web/plant-legends.js build-web/deploy/

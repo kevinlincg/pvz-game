@@ -107,9 +107,9 @@ add_custom_command(TARGET plant-legends POST_BUILD
 # Platform-specific settings
 if(EMSCRIPTEN)
     set_target_properties(plant-legends PROPERTIES SUFFIX ".html")
-    target_link_options(plant-legends PRIVATE
-        --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/scripts@scripts
-        --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/assets@assets
+    
+    # Emscripten linker options
+    set(EM_LINK_FLAGS
         -sUSE_SDL=0
         -sMIN_WEBGL_VERSION=1
         -sMAX_WEBGL_VERSION=2
@@ -120,8 +120,22 @@ if(EMSCRIPTEN)
         -sSTACK_SIZE=2097152
         -sEXPORTED_FUNCTIONS=_main
         -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
-        --shell-file ${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html
     )
+    
+    # Preload scripts (always needed)
+    list(APPEND EM_LINK_FLAGS "--preload-file" "${CMAKE_CURRENT_SOURCE_DIR}/scripts@scripts")
+    
+    # Preload assets if directory exists
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
+        list(APPEND EM_LINK_FLAGS "--preload-file" "${CMAKE_CURRENT_SOURCE_DIR}/assets@assets")
+    endif()
+    
+    # Shell file if exists
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html")
+        list(APPEND EM_LINK_FLAGS "--shell-file" "${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html")
+    endif()
+    
+    target_link_options(plant-legends PRIVATE ${EM_LINK_FLAGS})
 elseif(APPLE)
     find_library(COREAUDIO_LIBRARY CoreAudio)
     find_library(AUDIOUNIT_LIBRARY AudioUnit)
