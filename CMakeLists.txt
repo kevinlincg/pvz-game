@@ -45,9 +45,11 @@ else()
         INTERFACE_COMPILE_DEFINITIONS "SF3_STATIC"
     )
     
-    # 在 prebuilt 模式下，不額外鏈接 SDL3
-    # SF3 的 static library 已經包含了所有必要的符號
+    # 添加 SDL3 頭文件路徑（prebuilt 模式需要）
+    include_directories(${SF3_BUILD_DIR}/_deps/sdl3-src/include)
+    
     message(STATUS "[Plant Legends] Using prebuilt SF3 from: ${SF3_LIBRARY}")
+    message(STATUS "[Plant Legends] SDL3 include: ${SF3_BUILD_DIR}/_deps/sdl3-src/include")
 endif()
 
 # --- Lua Integration ---
