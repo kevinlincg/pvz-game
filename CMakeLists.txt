@@ -48,16 +48,8 @@ else()
     # 添加 SDL3 頭文件路徑（prebuilt 模式需要）
     include_directories(${SF3_BUILD_DIR}/_deps/sdl3-src/include)
     
-    # 添加 Lua 庫（prebuilt 模式需要單獨鏈接）
-    add_library(lua54 STATIC IMPORTED)
-    set_target_properties(lua54 PROPERTIES
-        IMPORTED_LOCATION "${SF3_BUILD_DIR}/_deps/lua54-build/liblua54.a"
-        INTERFACE_INCLUDE_DIRECTORIES "${SF3_ENGINE_DIR}/third_party/lua"
-    )
-    
     message(STATUS "[Plant Legends] Using prebuilt SF3 from: ${SF3_LIBRARY}")
     message(STATUS "[Plant Legends] SDL3 include: ${SF3_BUILD_DIR}/_deps/sdl3-src/include")
-    message(STATUS "[Plant Legends] Lua lib: ${SF3_BUILD_DIR}/_deps/lua54-build/liblua54.a")
 endif()
 
 # --- Lua Integration ---
@@ -96,11 +88,6 @@ target_include_directories(plant-legends PRIVATE
 
 target_link_libraries(plant-legends PRIVATE sf3)
 
-# 在 prebuilt 模式下額外鏈接 Lua
-if(NOT PVZ_SF3_SOURCE)
-    target_link_libraries(plant-legends PRIVATE lua54)
-endif()
-
 # Copy scripts to build directory
 add_custom_command(TARGET plant-legends POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -135,9 +122,12 @@ if(EMSCRIPTEN)
         -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
     )
     
-    # TODO: Add file preloading after basic build works
-    # --preload-file scripts@scripts
-    # --preload-file assets@assets
+    # 使用 --whole-archive 強制鏈接 SF3 中的所有符號（包括 Lua）
+    target_link_options(plant-legends PRIVATE
+        -Wl,--whole-archive
+        $<TARGET_FILE:sf3>
+        -Wl,--no-whole-archive
+    )
     
     # Shell file if exists
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html")
