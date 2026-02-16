@@ -52,6 +52,15 @@ jobs:
           echo "SF3_LIBRARY: ${{ github.workspace }}/sf3-engine/build-web/libsf3.a"
           ls -lh ${{ github.workspace }}/sf3-engine/build-web/libsf3.a || echo "ERROR: libsf3.a not found!"
           
+          echo ""
+          echo "=== Looking for Lua library ==="
+          find ${{ github.workspace }}/sf3-engine/build-web -name "liblua*.a" -o -name "lua*.a" 2>/dev/null || echo "Lua lib not found in expected locations"
+          
+          echo ""
+          echo "=== Checking SF3 build deps ==="
+          ls -la ${{ github.workspace }}/sf3-engine/build-web/_deps/ 2>/dev/null || echo "No _deps directory"
+          
+          echo ""
           echo "=== Checking pvz-game directory ==="
           pwd
           ls -la
