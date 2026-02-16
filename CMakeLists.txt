@@ -123,16 +123,18 @@ if(EMSCRIPTEN)
     )
     
     # Preload scripts (always needed)
-    list(APPEND EM_LINK_FLAGS "--preload-file" "${CMAKE_CURRENT_SOURCE_DIR}/scripts@scripts")
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/scripts")
+        list(APPEND EM_LINK_FLAGS "--preload-file" "scripts@scripts")
+    endif()
     
     # Preload assets if directory exists
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
-        list(APPEND EM_LINK_FLAGS "--preload-file" "${CMAKE_CURRENT_SOURCE_DIR}/assets@assets")
+        list(APPEND EM_LINK_FLAGS "--preload-file" "assets@assets")
     endif()
     
     # Shell file if exists
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html")
-        list(APPEND EM_LINK_FLAGS "--shell-file" "${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html")
+        list(APPEND EM_LINK_FLAGS "--shell-file" "web/shell.html")
     endif()
     
     target_link_options(plant-legends PRIVATE ${EM_LINK_FLAGS})
