@@ -45,19 +45,27 @@ jobs:
           
           echo ""
           echo "=== Compiling SF3 ==="
-          cmake --build build-web -j$(nproc) 2>&1 | tail -50
+          cmake --build build-web -j$(nproc) 2>&1 | tail -100
           
           echo ""
           echo "=== Checking SF3 build output ==="
           ls -lh build-web/libsf3.a || echo "ERROR: libsf3.a not found!"
           
           echo ""
-          echo "=== ALL .a files in build-web ==="
-          find build-web -name "*.a" -type f
+          echo "=== ALL .a files in build-web (with size) ==="
+          find build-web -name "*.a" -type f -exec ls -lh {} \;
+          
+          echo ""
+          echo "=== Looking for Lua libraries ==="
+          find build-web -name "*lua*.a" -type f -exec ls -lh {} \;
           
           echo ""
           echo "=== Directory structure of _deps ==="
           ls -la build-web/_deps/ 2>/dev/null || echo "No _deps directory"
+          
+          echo ""
+          echo "=== Check for lua54 directory ==="
+          ls -la build-web/_deps/lua54-* 2>/dev/null || echo "No lua54 directory"
 
       - name: Build pvz-game (web)
         run: |
