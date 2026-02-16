@@ -22,7 +22,7 @@ Plant::Plant(const std::string& plantId)
     loadFromLua();
     
     // 設置碰撞盒
-    bounds = Rect(position.x - 30, position.y - 30, 60, 60);
+    bounds = SF3::Rect(position.x - 30, position.y - 30, 60, 60);
 }
 
 void Plant::loadFromLua() {

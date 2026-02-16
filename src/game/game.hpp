@@ -68,7 +68,7 @@ public:
     
     // 敵人
     void spawnEnemy(const std::string& enemyId, i32 row);
-    std::vector<EnemyPtr> getEnemies() const;
+    const std::vector<EnemyPtr>& getEnemies() const { return enemies; }
     
     // 資源
     i32 getSun() const { return sun; }

@@ -11,22 +11,6 @@
 #include <functional>
 #include <cmath>
 
-// 前向聲明 SF3 類型
-namespace SF3 {
-    struct Rect {
-        float x, y, w, h;
-        Rect() : x(0), y(0), w(0), h(0) {}
-        Rect(float x, float y, float w, float h) : x(x), y(y), w(w), h(h) {}
-    };
-    
-    struct Color {
-        unsigned char r, g, b, a;
-        Color() : r(255), g(255), b(255), a(255) {}
-        Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255) 
-            : r(r), g(g), b(b), a(a) {}
-    };
-}
-
 namespace PL {
 
 // 基本類型
@@ -69,16 +53,6 @@ struct Vec2 {
         return (*this - other).lengthSq();
     }
 };
-
-// 前向宣告 SF3 類型
-namespace SF3 {
-    struct Rect;
-    struct Color;
-}
-
-// 使用 SF3 的 Rect 和 Color
-using Rect = SF3::Rect;
-using Color = SF3::Color;
 
 // 網格座標
 struct GridCoord {

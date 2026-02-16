@@ -23,7 +23,7 @@ Enemy::Enemy(const std::string& enemyId)
     loadFromLua();
     
     // 設置碰撞盒
-    bounds = Rect(position.x - 25, position.y - 25, 50, 50);
+    bounds = SF3::Rect(position.x - 25, position.y - 25, 50, 50);
 }
 
 void Enemy::loadFromLua() {

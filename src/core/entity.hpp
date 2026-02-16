@@ -5,6 +5,7 @@
 #pragma once
 
 #include "core/types.hpp"
+#include "sf3.hpp"
 #include <vector>
 #include <memory>
 
@@ -35,8 +36,8 @@ public:
     u32 getId() const { return id; }
     
     // 碰撞
-    const Rect& getBounds() const { return bounds; }
-    void setBounds(const Rect& b) { bounds = b; }
+    const SF3::Rect& getBounds() const { return bounds; }
+    void setBounds(const SF3::Rect& b) { bounds = b; }
     
     // 狀態效果
     void addStatus(const StatusEffect& effect);
@@ -50,7 +51,7 @@ protected:
     u32 id;
     EntityType type;
     Vec2 position;
-    Rect bounds;
+    SF3::Rect bounds;
     bool alive = true;
     bool active = true;
     

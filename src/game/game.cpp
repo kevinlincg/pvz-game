@@ -211,10 +211,6 @@ void Game::spawnEnemy(const std::string& enemyId, i32 row) {
     std::cout << "[Game] Spawned " << enemyId << " at row " << row << std::endl;
 }
 
-std::vector<EnemyPtr> Game::getEnemies() const {
-    return enemies;
-}
-
 bool Game::spendSun(i32 amount) {
     if (sun >= amount) {
         sun -= amount;

@@ -14,7 +14,7 @@ Projectile::Projectile(const Vec2& startPos, EnemyPtr target, f32 damage)
     , damage(damage)
 {
     setPosition(startPos);
-    bounds = Rect(startPos.x - 5, startPos.y - 5, 10, 10);
+    bounds = SF3::Rect(startPos.x - 5, startPos.y - 5, 10, 10);
 }
 
 void Projectile::update(f32 dt) {
