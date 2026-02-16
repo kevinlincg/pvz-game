@@ -36,10 +36,20 @@ jobs:
             -DSDL_SHARED=OFF \
             -DSDL_STATIC=ON
           cmake --build build-web -j$(nproc)
+          
+          echo "=== Checking SF3 build output ==="
+          ls -lh build-web/libsf3.a || echo "ERROR: libsf3.a not found!"
+          file build-web/libsf3.a || true
 
       - name: Build pvz-game (web)
         working-directory: pvz-game
         run: |
+          echo "=== Checking SF3 paths ==="
+          echo "SF3_ENGINE_DIR: ${{ github.workspace }}/sf3-engine"
+          echo "SF3_BUILD_DIR: ${{ github.workspace }}/sf3-engine/build-web"
+          echo "SF3_LIBRARY: ${{ github.workspace }}/sf3-engine/build-web/libsf3.a"
+          ls -lh ${{ github.workspace }}/sf3-engine/build-web/libsf3.a || echo "ERROR: libsf3.a not found!"
+          
           emcmake cmake -B build-web -G "Unix Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
             -DSF3_ENGINE_DIR=${{ github.workspace }}/sf3-engine \
