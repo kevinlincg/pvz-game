@@ -31,7 +31,7 @@
             height: 720px;
             border: 2px solid #333;
             border-radius: 4px;
-            background: #2d5a27;  /* 綠色背景，方便確認 Canvas 可見 */
+            background: transparent;  /* 移除背景色，讓遊戲渲染顯示 */
             max-width: 100%;
             height: auto;
             position: relative;
@@ -114,20 +114,6 @@
             // 確保 Canvas 可見
             var canvas = document.getElementById('canvas');
             if (canvas) {
-                // 檢查 WebGL 支援
-                var gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
-                if (gl) {
-                    console.log('[Web] WebGL supported:', gl.getParameter(gl.VERSION));
-                    console.log('[Web] WebGL renderer:', gl.getParameter(gl.RENDERER));
-                    
-                    // 測試繪製紅色三角形
-                    gl.clearColor(1.0, 0.0, 0.0, 1.0);  // 紅色
-                    gl.clear(gl.COLOR_BUFFER_BIT);
-                    console.log('[Web] Test: Clearing canvas to RED');
-                } else {
-                    console.error('[Web] WebGL not supported!');
-                }
-                
                 canvas.style.display = 'block';
                 canvas.style.visibility = 'visible';
                 canvas.style.opacity = '1';
