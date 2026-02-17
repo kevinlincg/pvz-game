@@ -98,11 +98,13 @@
                 var progressText = document.getElementById('progress-text');
                 var progressFill = document.getElementById('progress-fill');
                 var loading = document.getElementById('loading');
-                if (!text) {
-                    // Done loading
+                
+                // 如果是 Running... 或空字符串，隱藏 loading
+                if (!text || text === 'Running...') {
                     if (loading) loading.style.display = 'none';
                     return;
                 }
+                
                 if (progressText) progressText.innerText = text;
                 var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
                 if (m && progressFill) {
@@ -111,10 +113,18 @@
                 }
             },
             onRuntimeInitialized: function() {
+                console.log('[Web] Runtime initialized, hiding loading screen');
                 var loading = document.getElementById('loading');
                 if (loading) loading.style.display = 'none';
             },
-            print: function(text) { console.log(text); },
+            print: function(text) { 
+                console.log(text);
+                // 當看到 "Game Loop Started" 時，確保隱藏 loading
+                if (text.indexOf('Game Loop Started') >= 0) {
+                    var loading = document.getElementById('loading');
+                    if (loading) loading.style.display = 'none';
+                }
+            },
             printErr: function(text) {
                 console.warn(text);
                 var pt = document.getElementById('progress-text');
@@ -126,6 +136,15 @@
                 console.error('Abort: ' + what);
             }
         };
+        
+        // 備用方案：3秒後強制隱藏 loading
+        setTimeout(function() {
+            var loading = document.getElementById('loading');
+            if (loading && loading.style.display !== 'none') {
+                console.log('[Web] Force hiding loading screen after 3s');
+                loading.style.display = 'none';
+            }
+        }, 3000);
     </script>
     {{{ SCRIPT }}}
 </body>
